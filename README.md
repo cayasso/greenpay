@@ -8,6 +8,12 @@ Simple [GreenPay](https://greenpay.me/) API Client for NodeJS.
 ## Installation
 
 ```bash
+$ yarn add greenpay
+```
+
+Or
+
+```bash
 $ npm install greenpay
 ```
 
@@ -336,6 +342,13 @@ console.log(payments)
 ```bash
 $ yarn install
 $ yarn test
+```
+
+Or
+
+```bash
+$ npm install
+$ npm run test
 ```
 
 ## License
