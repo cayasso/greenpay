@@ -4,6 +4,5 @@ node_modules
 .release.json
 .greenpayrc
 local.json
-src
 test
 examples/
