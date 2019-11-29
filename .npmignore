@@ -2,6 +2,7 @@ node_modules
 .DS_Store
 *.log
 .release.json
+.greenpayrc
 local.json
 src
 test
