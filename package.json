@@ -2,7 +2,7 @@
   "name": "greenpay",
   "version": "0.1.0",
   "description": "Greenpay API wrapper for NodeJS.",
-  "main": "src/index.js",
+  "main": "index.js",
   "author": {
     "name": "Jonathan Brumley",
     "email": "cayasso@gmail.com"
