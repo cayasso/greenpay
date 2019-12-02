@@ -90,9 +90,9 @@ You can startup your node application like this:
 GREENPAY_SECRET=abc123 GREENPAY_MERCHANT=my-merchant GREENPAY_TERMINAL=my-termianl GREENPAY_PUBLIC_KEY=my-public-key node app.js
 ```
 
-### api.cards.tokenize(data)
+### api.cards.tokenize(data, [options])
 
-Tokenize a new card.
+Tokenize a new card. you can pass `requestId` as an optional in the second argument.
 
 ```js
 const card = await api.cards.tokenize({
@@ -103,6 +103,20 @@ const card = await api.cards.tokenize({
   month: 12,
   year: 25
 })
+
+// Or with optional request id
+
+const card = await api.cards.tokenize(
+  {
+    nick: 'Hulk',
+    name: 'Bruce Banner',
+    number: 4242424242424242,
+    cvc: 123,
+    month: 12,
+    year: 25
+  },
+  { requestId: 'abc123' }
+)
 
 console.log(card)
 
@@ -115,7 +129,29 @@ console.log(card)
   month: 12,
   name: 'Bruce Banner',
   nick: 'Hulk',
-  brand: 'Visa'
+  brand: 'Visa',
+  requestId: 'abc123'
+}
+*/
+```
+
+### api.cards.delete(token, [options])
+
+Delete a card token. You can pass `requestId` as an optional in the second argument.
+
+```js
+const res = await api.cards.tokenize('1deebcac-ea11-1111-1111-11a1b1d11111')
+
+// Or with optional request id
+
+const res = await api.cards.delete('1deebcac-ea11-1111-1111-11a1b1d11111', { requestId: 'abc123' })
+
+console.log(res)
+
+/*
+{
+  token: '1deebcac-ea11-1111-1111-11a1b1d11111',
+  requestId: 'abc123'
 }
 */
 ```
@@ -130,6 +166,54 @@ const subscription = await api.subscriptions.create({
   userId: 'abc123',
   description: 'Premium',
   token: '1deebcac-ea11-1111-1111-11a1b1d11111'
+})
+
+// With additional meta data
+const subscription = await api.subscriptions.create({
+  amount: 100,
+  userId: 'abc123',
+  description: 'Premium',
+  token: '1deebcac-ea11-1111-1111-11a1b1d11111',
+  data: {
+    email: 'hulk@acme.com',
+    name: 'Bruce Banner',
+    plan: 'premium'
+  }
+})
+
+// With initial payment
+const subscription = await api.subscriptions.create({
+  amount: 100,
+  userId: 'abc123',
+  description: 'Premium',
+  token: '1deebcac-ea11-1111-1111-11a1b1d11111',
+  initialPayment: {
+    amount: 100,
+    description: 'initial payment'
+  }
+})
+
+// With start and end date
+const subscription = await api.subscriptions.create({
+  amount: 100,
+  userId: 'abc123',
+  description: 'Premium',
+  token: '1deebcac-ea11-1111-1111-11a1b1d11111',
+  startDate: 1575295673918,
+  endDate: 1607666400000
+})
+
+// With custom cadence
+const subscription = await api.subscriptions.create({
+  amount: 100,
+  userId: 'abc123',
+  description: 'Premium',
+  token: '1deebcac-ea11-1111-1111-11a1b1d11111',
+  cadence: {
+    mode: 'EVERY',
+    unit: 'YEAR',
+    every: 1
+  }
 })
 
 console.log(subscription)

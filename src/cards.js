@@ -150,11 +150,12 @@ module.exports = ({ merchantUrl, checkoutUrl, publicKey, merchant, secret } = {}
    * Tokenize card.
    *
    * @param {Object} data
+   * @param {Object} [options]
    * @return {Boolean}
    * @public
    */
 
-  const tokenize = async data => {
+  const tokenize = async (data, { requestId = nanoId() } = {}) => {
     const card = {
       cvc: data.cvc,
       nickname: data.nick,
@@ -163,21 +164,38 @@ module.exports = ({ merchantUrl, checkoutUrl, publicKey, merchant, secret } = {}
       expirationDate: { month: data.month, year: data.year }
     }
 
-    const security = await createOrder({ secret, merchantId: merchant, requestId: nanoId() })
+    const security = await createOrder({ secret, merchantId: merchant, requestId })
     debug('card order created')
-    const { status, requestId, ...res } = await sign({ card }, security)
+    const { status, ...res } = await sign({ card }, security)
     debug('verify signed card %o', { status, requestId, ...res })
     const isSecure = verify(res._signature, { status, requestId })
 
     if (isSecure) {
       const result = normalize(res)
       debug('tokenized card %o', result)
-      return result
+      return { ...result, requestId }
     }
 
     debug('request response was not secure')
     throw new Error('Request not secure')
   }
 
-  return { tokenize }
+  /**
+   * Delete a card token.
+   *
+   * @param {String} token
+   * @param {Object} [options]
+   * @return {Promise}
+   * @public
+   */
+
+  const destroy = async (token, { requestId = nanoId() } = {}) => {
+    const url = merchantUrl + '/deleteToken'
+    debug('delete token %s %s', url, token)
+    const { status } = await axios.post(url, { token, secret, requestId, merchantId: merchant })
+    if (status !== 200) throw new Error('Invalid request')
+    return { token, requestId }
+  }
+
+  return { tokenize, delete: destroy }
 }

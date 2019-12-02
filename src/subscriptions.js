@@ -60,7 +60,11 @@ module.exports = ({ secret, terminal, merchantUrl, merchant: merchantId, ...conf
     cadence,
     description,
     currency = config.currency,
-    meta = {}
+    payment,
+    initialPayment,
+    startDate,
+    endDate,
+    data = {}
   }) => {
     const body = {
       userId,
@@ -78,7 +82,19 @@ module.exports = ({ secret, terminal, merchantUrl, merchant: merchantId, ...conf
           }
         }
       ],
-      optional: meta
+      optional: data
+    }
+
+    if (payment || initialPayment) {
+      body.initialPayment = payment || initialPayment
+    }
+
+    if (startDate) {
+      body.startDate = startDate
+    }
+
+    if (endDate) {
+      body.endDate = endDate
     }
 
     const res = await post('', body)
