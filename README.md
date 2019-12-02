@@ -140,7 +140,7 @@ console.log(card)
 Delete a card token. You can pass `requestId` as an optional in the second argument.
 
 ```js
-const res = await api.cards.tokenize('1deebcac-ea11-1111-1111-11a1b1d11111')
+const res = await api.cards.delete('1deebcac-ea11-1111-1111-11a1b1d11111')
 
 // Or with optional request id
 
