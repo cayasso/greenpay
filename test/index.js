@@ -70,6 +70,7 @@ test('returns all cards endpoints', t => {
   const api = greenpay({ ...options })
 
   t.is(typeof api.cards.tokenize, 'function')
+  t.is(typeof api.cards.delete, 'function')
 })
 
 test('returns all subscriptions endpoints', t => {

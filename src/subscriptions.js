@@ -98,19 +98,14 @@ module.exports = ({ secret, terminal, merchantUrl, merchant: merchantId, ...conf
     }
 
     const res = await post('', body)
-    const {
-      status,
-      subscriptionId,
-      nextPaymentDate,
-      result: { initialPayment: payment }
-    } = res.data
+    const { status, subscriptionId, nextPaymentDate, result } = res.data
 
     if (status !== 200) {
       throw new Error('Unable to create subscription')
     }
 
     return {
-      payment,
+      payment: result.initialPayment,
       id: subscriptionId,
       dueDate: nextPaymentDate + 'T00:00:00.000Z',
       status: 'ACTIVE',
