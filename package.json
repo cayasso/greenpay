@@ -1,6 +1,6 @@
 {
   "name": "greenpay",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "description": "Greenpay API wrapper for NodeJS.",
   "main": "index.js",
   "author": {
