@@ -1,6 +1,7 @@
 'use strict'
 
 const axios = require('axios')
+const pick = require('lodash.pick')
 const debug = require('debug')('greenpay:subscriptions')
 
 module.exports = ({ secret, terminal, merchantUrl, merchant: merchantId, ...config } = {}) => {
@@ -198,8 +199,29 @@ module.exports = ({ secret, terminal, merchantUrl, merchant: merchantId, ...conf
    * @public
    */
 
-  const fetch = async ({ limit = 100, page = 1 } = {}) => {
+  const fetch = async ({ limit = 100, page = 1, filter } = {}) => {
     const body = { page, pageSize: limit }
+
+    if (filter) {
+      const query = {}
+
+      if (filter.user || filter.userId) {
+        query.user = filter.user || filter.userId
+      }
+
+      if (filter.status) {
+        query.status = typeof filter.status === 'string' ? [filter.status] : filter.status
+      }
+
+      if (filter.date || filter.subsDate) {
+        query.date = filter.date || filter.subsDate
+      }
+
+      body.filter = {
+        ...pick(filter, ['status', 'user', 'minAmount', 'maxAmount', 'subsDate']),
+        ...query
+      }
+    }
 
     debug('fetch subscription with %o', body)
 

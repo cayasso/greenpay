@@ -82,8 +82,7 @@ module.exports = ({ secret, terminal, merchantUrl, merchant: merchantId } = {}) 
       const { order = {} } = result
 
       return {
-        status: result.status,
-        orderStatus: result.orderStatus,
+        status: result.orderStatus,
         subscriptionId: order.subscriptionId,
         reference: order.order_reference,
         authorization: order.authorization,
