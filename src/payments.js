@@ -129,5 +129,5 @@ module.exports = ({ secret, terminal, merchantUrl, merchant: merchantId } = {}) 
     debug('fetched payments %o', payments)
   }
 
-  return { fetch, create, formatCallback }
+  return { fetch, create }
 }
