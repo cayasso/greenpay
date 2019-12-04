@@ -88,9 +88,9 @@ module.exports = ({ merchantUrl, checkoutUrl, publicKey, merchant, secret } = {}
    * @private
    */
 
-  const tokenizeOrder = async (data, token) => {
+  const tokenizeOrder = async (data, token, isUpdate) => {
     const config = { headers: { 'liszt-token': token } }
-    const url = checkoutUrl + '/tokenize'
+    const url = checkoutUrl + '/tokenize' + isUpdate ? '/update' : ''
     debug('tokenize order %s %o %o', url, data, config)
     const { data: res, status } = await axios.post(url, data, config)
     debug('tokenized card status %s %o', status, res)
@@ -106,8 +106,8 @@ module.exports = ({ merchantUrl, checkoutUrl, publicKey, merchant, secret } = {}
    * @private
    */
 
-  const createOrder = async data => {
-    const url = merchantUrl + '/tokenize'
+  const createOrder = async (data, isUpdate) => {
+    const url = merchantUrl + '/tokenize' + isUpdate ? '/update' : ''
     debug('create order %s %o', url, data)
     const { data: res, status } = await axios.post(url, data)
     if (status !== 200) throw new Error('Invalid request')
@@ -126,7 +126,7 @@ module.exports = ({ merchantUrl, checkoutUrl, publicKey, merchant, secret } = {}
   const sign = async (card, { token, session } = {}) => {
     rsa.setPublicKey(publicKey)
     const data = pack(card, session)
-    return tokenizeOrder(data, token)
+    return tokenizeOrder(data, token, Boolean(card.token))
   }
 
   /**
@@ -151,11 +151,11 @@ module.exports = ({ merchantUrl, checkoutUrl, publicKey, merchant, secret } = {}
    *
    * @param {Object} data
    * @param {Object} [options]
-   * @return {Boolean}
-   * @public
+   * @return {Object}
+   * @private
    */
 
-  const tokenize = async (data, { requestId = nanoId() } = {}) => {
+  const tokenize = async ({ token, ...data }, { requestId = nanoId() } = {}) => {
     const card = {
       cvc: data.cvc,
       nickname: data.nick,
@@ -164,9 +164,9 @@ module.exports = ({ merchantUrl, checkoutUrl, publicKey, merchant, secret } = {}
       expirationDate: { month: data.month, year: data.year }
     }
 
-    const security = await createOrder({ secret, merchantId: merchant, requestId })
+    const security = await createOrder({ secret, merchantId: merchant, requestId }, Boolean(token))
     debug('card order created')
-    const { status, ...res } = await sign({ card }, security)
+    const { status, ...res } = await sign({ card, token }, security)
     debug('verify signed card %o', { status, requestId, ...res })
     const isSecure = verify(res._signature, { status, requestId })
 
@@ -178,6 +178,33 @@ module.exports = ({ merchantUrl, checkoutUrl, publicKey, merchant, secret } = {}
 
     debug('request response was not secure')
     throw new Error('Request not secure')
+  }
+
+  /**
+   * Create a tokenized card.
+   *
+   * @param {Object} data
+   * @param {Object} [options]
+   * @return {Object}
+   * @public
+   */
+
+  const create = async (data, options) => {
+    return tokenize(data, options)
+  }
+
+  /**
+   * Update a tokenized card.
+   *
+   * @param {String} token
+   * @param {Object} data
+   * @param {Object} [options]
+   * @return {Object}
+   * @public
+   */
+
+  const update = async (token, data, options) => {
+    return tokenize({ ...data, token }, options)
   }
 
   /**
@@ -197,5 +224,5 @@ module.exports = ({ merchantUrl, checkoutUrl, publicKey, merchant, secret } = {}
     return { token, requestId }
   }
 
-  return { tokenize, delete: destroy }
+  return { create, update, delete: destroy }
 }

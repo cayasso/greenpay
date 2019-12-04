@@ -3,6 +3,7 @@
 const assert = require('assert')
 const subscriptions = require('./subscriptions')
 const payments = require('./payments')
+const webhooks = require('./webhooks')
 const cards = require('./cards')
 const config = require('./config')
 
@@ -30,6 +31,7 @@ module.exports = ({ cadence = {}, ...options } = {}) => {
   return {
     subscriptions: subscriptions(options),
     payments: payments(options),
+    webhooks: webhooks(options),
     cards: cards(options)
   }
 }

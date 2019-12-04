@@ -69,7 +69,8 @@ test('returns all api endpoints', t => {
 test('returns all cards endpoints', t => {
   const api = greenpay({ ...options })
 
-  t.is(typeof api.cards.tokenize, 'function')
+  t.is(typeof api.cards.create, 'function')
+  t.is(typeof api.cards.update, 'function')
   t.is(typeof api.cards.delete, 'function')
 })
 
@@ -87,4 +88,10 @@ test('returns all payments endpoints', t => {
 
   t.is(typeof api.payments.create, 'function')
   t.is(typeof api.payments.fetch, 'function')
+})
+
+test('returns all webhooks endpoints', t => {
+  const api = greenpay({ ...options })
+
+  t.is(typeof api.webhooks.validate, 'function')
 })

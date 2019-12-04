@@ -32,7 +32,7 @@ const gpApi = greenpay({
 
 ```js
 gpApi.cards
-  .tokenize({
+  .create({
     nick: 'Hulk',
     name: 'Bruce Banner',
     number: 4242424242424242,
@@ -49,7 +49,7 @@ gpApi.cards
 
 // or with async/await
 
-const plan = await gpApi.cards.tokenize({
+const plan = await gpApi.cards.create({
   nick: 'Hulk',
   name: 'Bruce Banner',
   number: 4242424242424242,
@@ -90,12 +90,12 @@ You can startup your node application like this:
 GREENPAY_SECRET=abc123 GREENPAY_MERCHANT=my-merchant GREENPAY_TERMINAL=my-termianl GREENPAY_PUBLIC_KEY=my-public-key node app.js
 ```
 
-### api.cards.tokenize(data, [options])
+### api.cards.create(data, [options])
 
-Tokenize a new card. you can pass `requestId` as an optional in the second argument.
+Tokenize a card. You can pass `requestId` as an optional in the second argument.
 
 ```js
-const card = await api.cards.tokenize({
+const card = await api.cards.create({
   nick: 'Hulk',
   name: 'Bruce Banner',
   number: 4242424242424242,
@@ -106,7 +106,7 @@ const card = await api.cards.tokenize({
 
 // Or with optional request id
 
-const card = await api.cards.tokenize(
+const card = await api.cards.create(
   {
     nick: 'Hulk',
     name: 'Bruce Banner',
@@ -127,6 +127,52 @@ console.log(card)
   bin: '111111',
   year: 25,
   month: 12,
+  name: 'Bruce Banner',
+  nick: 'Hulk',
+  brand: 'Visa',
+  requestId: 'abc123'
+}
+*/
+```
+
+### api.cards.update(token, data, [options])
+
+Update a tokenized card. You can pass `requestId` as an optional in the third argument.
+
+```js
+const card = await api.cards.update('1deebcac-ea11-1111-1111-11a1b1d11111', {
+  nick: 'Hulk',
+  name: 'Bruce Banner',
+  number: 4242424242424242,
+  cvc: 123,
+  month: 12,
+  year: 25
+})
+
+// Or with optional request id
+
+const card = await api.cards.update(
+  '1deebcac-ea11-1111-1111-11a1b1d11111',
+  {
+    nick: 'Hulk',
+    name: 'Bruce Banner',
+    number: 4777777777777777,
+    cvc: 222,
+    month: 9,
+    year: 30
+  },
+  { requestId: 'abc123' }
+)
+
+console.log(card)
+
+/*
+{
+  token: '1deebcac-ea11-1111-1111-11a1b1d11111',
+  last4: '7777',
+  bin: '111111',
+  year: 30,
+  month: 9,
   name: 'Bruce Banner',
   nick: 'Hulk',
   brand: 'Visa',
@@ -419,6 +465,14 @@ console.log(payments)
   ...
 ]
 */
+```
+
+### api.webhooks.validate(data, signature)
+
+Validate webhook incoming request.
+
+```js
+const res = await api.webhooks.validate(data, signature)
 ```
 
 ## Run tests
