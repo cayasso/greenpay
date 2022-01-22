@@ -19,7 +19,7 @@
     "debug": "^4.1.1",
     "jsrsasign": "^8.0.12",
     "lodash.pick": "^4.4.0",
-    "nanoid": "^2.1.7",
+    "nanoid": "^3.1.31",
     "node-jsencrypt": "^1.0.0",
     "rc": "^1.2.8"
   },
